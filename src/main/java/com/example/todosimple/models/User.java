@@ -14,24 +14,23 @@ import java.util.Objects;
 @Entity
 @Table(name = User.TABLE_NAME)
 public class User {
-    public interface CreateUser{}
-    public interface UpdateUser{}
+    public interface CreateUser {
+    }
+
+    public interface UpdateUser {
+    }
+
     public static final String TABLE_NAME = "user";
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", unique = true)
     private Long id;
 
-    //(NAME -> define o nome da coluna), (LENGHT -> define o tamanho de caracteres que vai ser aceito),
-    //(NULLABLE -> define se o campo pode ser nulo ou não), (UNIQUE -> define se o valor é unico ou não)
     @Column(name = "username", length = 100, nullable = false, unique = true)
     @NotNull(groups = CreateUser.class)
-    //NOTNULL -> não vai deixar o usuário deixar o campo com valor nulo
     @NotEmpty(groups = CreateUser.class)
-    //NOTEMPTY -> não vai deixar o valor ser vazio
     @Size(groups = CreateUser.class, min = 2, max = 100)
-    //SIZE -> vai definir o tamanho min e max que vai poder ser usado pelo user
     private String username;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -41,9 +40,10 @@ public class User {
     @Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
     private String password;
 
-    //private List<Task> tasks = new ArrayList<Task>();
+    // private List<Task> tasks = new ArrayList<Task>();
 
-    public User() {}; //construtor vazio
+    public User() {
+    }
 
     public User(Long id, String username, String password) {
         this.id = id;
@@ -52,7 +52,7 @@ public class User {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
     public void setId(Long id) {
@@ -60,7 +60,7 @@ public class User {
     }
 
     public String getUsername() {
-        return username;
+        return this.username;
     }
 
     public void setUsername(String username) {
@@ -68,7 +68,7 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return this.password;
     }
 
     public void setPassword(String password) {
@@ -76,15 +76,28 @@ public class User {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        User user = (User) o;
-        return Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password);
+    public boolean equals(Object obj) {
+        if (obj == this)
+            return true;
+        if (obj == null)
+            return false;
+        if (!(obj instanceof User))
+            return false;
+        User other = (User) obj;
+        if (this.id == null)
+            if (other.id != null)
+                return false;
+            else if (!this.id.equals(other.id))
+                return false;
+        return Objects.equals(this.id, other.id) && Objects.equals(this.username, other.username)
+                && Objects.equals(this.password, other.password);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password);
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((this.id == null) ? 0 : this.id.hashCode());
+        return result;
     }
 }
