@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import org.springframework.scheduling.config.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,8 +38,11 @@ public class User {
     @NotEmpty(groups = {CreateUser.class, UpdateUser.class})
     @Size(groups = {CreateUser.class, UpdateUser.class}, min = 8, max = 60)
     private String password;
-
-    // private List<Task> tasks = new ArrayList<Task>();
+    @OneToMany(mappedBy = "user")
+    //OneToMany -> Significa que um User terá várias Task;
+    //mappedBy -> Vai ser passado onde está sendo mapeado, é necessário colocar o nome da váriavel
+    //de onde está sendo mapeado;
+    private List<Task> tasks = new ArrayList<Task>();
 
     public User() {
     }
@@ -73,6 +75,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public List<Task> getTasks() {
+        return tasks;
+    }
+
+    public void setTasks(List<Task> tasks) {
+        this.tasks = tasks;
     }
 
     @Override
